@@ -9,8 +9,8 @@ const TARGETS = {
   sj_tenders: "https://somalijobs.com/tenders",
 } as const;
 
-export async function GET(req: Request) {
-  const which = new URL(req.url).searchParams.get("t") as keyof typeof TARGETS | null;
+export async function GET(_req: Request, ctx: { params: Promise<{ t: string }> }) {
+  const which = (await ctx.params).t as keyof typeof TARGETS;
   const url = which ? TARGETS[which] : undefined;
   if (!url) return NextResponse.json({ targets: Object.keys(TARGETS) });
   try {

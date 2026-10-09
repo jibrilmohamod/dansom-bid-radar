@@ -9,9 +9,14 @@ function cookieHeader(res: Response): string {
   return all.map((c) => c.split(";")[0]).join("; ");
 }
 
-export async function fetchSomaliJobsHtml(page = 1): Promise<string> {
+export type SjDebug = { landingStatus?: number; cookieNames?: string[]; tokenLength?: number; tokenCount?: number; fetchStatus?: number };
+
+export async function fetchSomaliJobsHtml(page = 1, debug: SjDebug = {}): Promise<string> {
   const landing = await fetch(`${BASE}/tenders`, { headers: { "user-agent": UA }, cache: "no-store" });
   const html = await landing.text();
+  debug.landingStatus = landing.status;
+  debug.cookieNames = (landing.headers.getSetCookie?.() ?? []).map((c) => c.split("=")[0]);
+  debug.tokenCount = [...html.matchAll(/api_token\s*=/g)].length;
   const token = html.match(/api_token\s*=\s*["']([^"']+)["']/)?.[1];
   if (!token) throw new Error(`SomaliJobs: no page token (status ${landing.status})`);
 
@@ -35,6 +40,8 @@ export async function fetchSomaliJobsHtml(page = 1): Promise<string> {
     body,
     cache: "no-store",
   });
+  debug.tokenLength = token.length;
+  debug.fetchStatus = res.status;
   if (!res.ok) throw new Error(`SomaliJobs: listing request failed (${res.status})`);
   return res.text();
 }

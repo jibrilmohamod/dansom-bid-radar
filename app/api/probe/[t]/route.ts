@@ -17,9 +17,10 @@ export async function GET(_req: Request, ctx: { params: Promise<{ t: string }> }
   const which = (await ctx.params).t.split("~")[0] as keyof typeof TARGETS;
   if (which === ("sj_fetch" as string)) {
     try {
-      const html = await fetchSomaliJobsHtml(1);
+      const debug = {};
+      const html = await fetchSomaliJobsHtml(1, debug);
       const hrefs = [...html.matchAll(/href="([^"]+)"/g)].map((m) => m[1]).slice(0, 40);
-      return NextResponse.json({ length: html.length, hrefs, sample: html.slice(0, 5000) });
+      return NextResponse.json({ debug, length: html.length, hrefs, sample: html.slice(0, 5000) });
     } catch (e) {
       return NextResponse.json({ error: String(e) }, { status: 502 });
     }

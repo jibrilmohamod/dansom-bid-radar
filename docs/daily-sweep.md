@@ -2,7 +2,7 @@
 
 A scheduled Claude routine follows these steps every morning at 06:47 Nairobi time. The search profile is in [`search-profile.md`](search-profile.md).
 
-- Website: the Vercel deployment of this repo
+- Website: https://dansom-bid-radar.vercel.app (Vercel, deploys on every push to main)
 - Database: Supabase project `dansom-bid-radar` (ref `leifxdgyacenhnmpzpmb`). The routine writes to it with the Supabase connector's `execute_sql`.
 - Digest goes to: jibrilmohamod@gmail.com, sent from Gmail
 

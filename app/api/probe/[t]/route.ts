@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { fetchSomaliJobsHtml } from "@/lib/sources/somalijobs";
 
 export const dynamic = "force-dynamic";
 
@@ -14,6 +15,15 @@ const TARGETS = {
 
 export async function GET(_req: Request, ctx: { params: Promise<{ t: string }> }) {
   const which = (await ctx.params).t.split("~")[0] as keyof typeof TARGETS;
+  if (which === ("sj_fetch" as string)) {
+    try {
+      const html = await fetchSomaliJobsHtml(1);
+      const hrefs = [...html.matchAll(/href="([^"]+)"/g)].map((m) => m[1]).slice(0, 40);
+      return NextResponse.json({ length: html.length, hrefs, sample: html.slice(0, 5000) });
+    } catch (e) {
+      return NextResponse.json({ error: String(e) }, { status: 502 });
+    }
+  }
   const url = which ? TARGETS[which] : undefined;
   if (!url) return NextResponse.json({ targets: Object.keys(TARGETS) });
   try {

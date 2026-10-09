@@ -13,7 +13,7 @@ const TARGETS = {
 } as const;
 
 export async function GET(_req: Request, ctx: { params: Promise<{ t: string }> }) {
-  const which = (await ctx.params).t as keyof typeof TARGETS;
+  const which = (await ctx.params).t.split("~")[0] as keyof typeof TARGETS;
   const url = which ? TARGETS[which] : undefined;
   if (!url) return NextResponse.json({ targets: Object.keys(TARGETS) });
   try {

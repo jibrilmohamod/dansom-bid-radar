@@ -8,6 +8,7 @@ const TARGETS = {
   rw_api: "https://api.reliefweb.int/v2/jobs?appname=dansom-bid-radar&limit=2&filter[field]=country.iso3&filter[value]=som",
   sj_tenders: "https://somalijobs.com/tenders",
   sj_js: "https://somalijobs.com/v3/src/editing-js/tenders/listing.js",
+  sj_ajax: "https://somalijobs.com/v3/src/editing-js/tenders/listing.js",
   sj_main: "https://somalijobs.com/v3/src/editing-js/main.js",
 } as const;
 

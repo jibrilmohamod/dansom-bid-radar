@@ -66,3 +66,10 @@ export async function setStatus(id: string, status: Status): Promise<void> {
   });
   if (error) throw new Error(`Could not update status: ${error.message}`);
 }
+
+export async function upsertLeads(leads: import("./sources/types").Lead[]): Promise<number> {
+  if (!leads.length) return 0;
+  const { data, error } = await db().rpc("radar_upsert_leads", { p_key: env("BID_RADAR_APP_KEY"), p_leads: leads });
+  if (error) throw new Error(`Could not save leads: ${error.message}`);
+  return (data as number) ?? 0;
+}

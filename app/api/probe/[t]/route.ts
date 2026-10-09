@@ -20,7 +20,7 @@ export async function GET(_req: Request, ctx: { params: Promise<{ t: string }> }
     const text = await r.text();
     const scripts = [...text.matchAll(/<script[^>]*src="([^"]+)"/g)].map((m) => m[1]).slice(0, 20);
     const apis = [...new Set([...text.matchAll(/["'](\/?api\/[^"']{2,80}|https?:\/\/[^"']*api[^"']{0,80})["']/g)].map((m) => m[1]))].slice(0, 30);
-    return NextResponse.json({ status: r.status, type: r.headers.get("content-type"), length: text.length, scripts, apis, head: text.slice(0, 6000), tail: text.slice(-800) });
+    return NextResponse.json({ status: r.status, type: r.headers.get("content-type"), length: text.length, scripts, apis, head: text.slice(0, 60000), tail: text.slice(-800) });
   } catch (e) {
     return NextResponse.json({ error: String(e) }, { status: 502 });
   }

@@ -5,8 +5,14 @@ const BASE = "https://somalijobs.com";
 const UA = "Mozilla/5.0 (compatible; DansomBidRadar/1.0; +https://dansom-bid-radar.vercel.app)";
 
 function cookieHeader(res: Response): string {
-  const all = res.headers.getSetCookie?.() ?? [];
-  return all.map((c) => c.split(";")[0]).join("; ");
+  // The site sets _csrf more than once; the last value wins, as in a browser.
+  const jar = new Map<string, string>();
+  for (const c of res.headers.getSetCookie?.() ?? []) {
+    const pair = c.split(";")[0];
+    const eq = pair.indexOf("=");
+    if (eq > 0) jar.set(pair.slice(0, eq).trim(), pair.slice(eq + 1));
+  }
+  return [...jar].map(([k, v]) => `${k}=${v}`).join("; ");
 }
 
 export type SjDebug = { landingStatus?: number; cookieNames?: string[]; tokenLength?: number; tokenCount?: number; fetchStatus?: number };

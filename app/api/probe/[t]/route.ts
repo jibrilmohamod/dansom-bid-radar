@@ -18,9 +18,11 @@ export async function GET(_req: Request, ctx: { params: Promise<{ t: string }> }
   try {
     const r = await fetch(url, { headers: { "user-agent": "Mozilla/5.0 (DansomBidRadar)", accept: "*/*" }, cache: "no-store" });
     const text = await r.text();
+    const at = text.indexOf("CSRF-Token");
+    const focus = at >= 0 ? text.slice(Math.max(0, at - 400), at + 3500) : "";
     const scripts = [...text.matchAll(/<script[^>]*src="([^"]+)"/g)].map((m) => m[1]).slice(0, 20);
     const apis = [...new Set([...text.matchAll(/["'](\/?api\/[^"']{2,80}|https?:\/\/[^"']*api[^"']{0,80})["']/g)].map((m) => m[1]))].slice(0, 30);
-    return NextResponse.json({ status: r.status, type: r.headers.get("content-type"), length: text.length, scripts, apis, head: text.slice(0, 60000), tail: text.slice(-800) });
+    return NextResponse.json({ focus, status: r.status, type: r.headers.get("content-type"), length: text.length, scripts, apis, head: text.slice(0, 60000), tail: text.slice(-800) });
   } catch (e) {
     return NextResponse.json({ error: String(e) }, { status: 502 });
   }

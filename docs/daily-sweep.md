@@ -10,7 +10,7 @@ A scheduled Claude routine follows these steps every morning at 06:47 Nairobi ti
 The Claude cloud environment blocks direct curl to tender sites, so the routine uses WebFetch and WebSearch. WebFetch URLs must be short (long UNGM search URLs are refused).
 
 ## Automatic listings (SomaliJobs and ReliefWeb)
-At 06:25 Nairobi a Vercel cron calls `/api/ingest`, which saves the newest SomaliJobs tenders (and ReliefWeb jobs for Somalia, Kenya and Ethiopia once `RELIEFWEB_APPNAME` is set in Vercel) into the `leads` table. The sweep starts from these:
+Between 05:05 and 06:00 Nairobi a Vercel cron calls (Vercel Hobby runs crons at any point in the scheduled hour) `/api/ingest`, which saves the newest SomaliJobs tenders (and ReliefWeb jobs for Somalia, Kenya and Ethiopia once `RELIEFWEB_APPNAME` is set in Vercel) into the `leads` table. The sweep starts from these:
 
 - `select source, ext_id, title, org, location, posted, deadline, url from leads where reviewed = false order by first_seen desc;`
 - SomaliJobs listings carry no deadline. Open the detail page with a short slug to read it, e.g. `https://somalijobs.com/tenders/<loc>/<id>/x` (the full slug can be too long for WebFetch).
